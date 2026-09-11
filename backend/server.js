@@ -1,35 +1,47 @@
 require("dotenv").config();
+
 const express = require("express");
-const dotenv = require("dotenv");
 const cors = require("cors");
 
 const connectDB = require("./config/db");
+
 const authRoutes = require("./routes/authRoutes");
 const menuItemRoutes = require("./routes/menuItemRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 
 const {
   protect,
-  adminOnly
+  adminOnly,
 } = require("./middleware/authMiddleware");
-
-
-dotenv.config();
 
 const app = express();
 
-// Database
+// =========================
+// DATABASE
+// =========================
+
 connectDB();
 
-// Middleware
+// =========================
+// MIDDLEWARE
+// =========================
+
 app.use(cors());
 app.use(express.json());
 
-// Routes
+// =========================
+// ROUTES
+// =========================
+
 app.use("/api/auth", authRoutes);
+
 app.use("/api/menu-items", menuItemRoutes);
+
 app.use("/api/orders", orderRoutes);
 
+// =========================
+// ADMIN TEST ROUTE
+// =========================
 
 app.get(
   "/api/admin/test",
@@ -38,21 +50,23 @@ app.get(
   (req, res) => {
     res.json({
       message: "Welcome Admin! Protected route working.",
-      user: req.user
+      user: req.user,
     });
   }
 );
 
-// Test route
+// =========================
+// ROOT TEST ROUTE
+// =========================
+
 app.get("/", (req, res) => {
   res.json({
-    message: "TastyBites API is running"
+    message: "TastyBites API is running",
   });
 });
 
-// Server
-const PORT = process.env.PORT || 5000;
+// =========================
+// VERCEL
+// =========================
 
-app.listen(PORT, () => {
-  console.log(`TastyBites server running on port ${PORT}`);
-});
+module.exports = app;
